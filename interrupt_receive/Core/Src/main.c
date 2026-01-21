@@ -25,6 +25,8 @@
 /* USER CODE BEGIN Includes */
 #include "OLED.h"
 #include "Key.h"
+#include "app_controller.h"
+#include "app_led.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -48,27 +50,23 @@
 uint8_t KeyNum = 0;
 //uint32_t TxID = 0x222;
 //uint8_t TxLength = 4;
-uint8_t TxDataArray[4][8] = {
-		{ 0x11, 0x22, 0x33, 0x44 },
-		{ 0xaa, 0xbb, 0xcc, 0xdd },
-		{ 0x00, 0x00, 0x00, 0x00 },
-		{ 0x00, 0x00, 0x00, 0x00 }
+uint8_t TxDataArray[4][8] = { { 0x11, 0x22, 0x33, 0x44 }, { 0xaa, 0xbb, 0xcc,
+		0xdd }, { 0x00, 0x00, 0x00, 0x00 }, { 0x00, 0x00, 0x00, 0x00 }
 
 };
 
-CAN_TxHeaderTypeDef TxMsgArray[5] = {
-		{ .StdId = 0x555, .ExtId = 0x00000000, .IDE =CAN_ID_STD, .RTR = CAN_RTR_DATA, .DLC = 4 },
-		{ .StdId = 0x000, .ExtId = 0x12345678, .IDE =CAN_ID_EXT, .RTR = CAN_RTR_DATA, .DLC = 4 },
-		{ .StdId = 0x666, .ExtId = 0x00000000, .IDE =CAN_ID_STD, .RTR = CAN_RTR_REMOTE, .DLC = 0 },
-		{ .StdId = 0x000, .ExtId = 0x12345678, .IDE =CAN_ID_EXT, .RTR = CAN_RTR_REMOTE, .DLC = 0 },
-		{0}
-};
+CAN_TxHeaderTypeDef TxMsgArray[5] = { { .StdId = 0x555, .ExtId = 0x00000000,
+		.IDE = CAN_ID_STD, .RTR = CAN_RTR_DATA, .DLC = 4 }, { .StdId = 0x000,
+		.ExtId = 0x12345678, .IDE = CAN_ID_EXT, .RTR = CAN_RTR_DATA, .DLC = 4 },
+		{ .StdId = 0x666, .ExtId = 0x00000000, .IDE = CAN_ID_STD, .RTR =
+				CAN_RTR_REMOTE, .DLC = 0 },
+		{ .StdId = 0x000, .ExtId = 0x12345678, .IDE = CAN_ID_EXT, .RTR =
+				CAN_RTR_REMOTE, .DLC = 0 }, { 0 } };
 
 uint8_t pTxMsgArray = 0;
 
 //uint32_t RxID;
 //uint8_t RxLength;
-
 
 /* USER CODE END PV */
 
@@ -114,6 +112,7 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN_Init();
   /* USER CODE BEGIN 2 */
+
 	OLED_Init();
 
 	OLED_ShowString(1, 1, "Rx :");
@@ -129,7 +128,7 @@ int main(void)
 
 		if (KeyNum == 1) {
 			MyCAN_Transmit(TxMsgArray[pTxMsgArray], TxDataArray[pTxMsgArray]);
-			pTxMsgArray ++;
+			pTxMsgArray++;
 			pTxMsgArray %= 4;
 		}
 
@@ -165,6 +164,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+		app_controller_task();
+		app_led_task();
+
 	}
   /* USER CODE END 3 */
 }
