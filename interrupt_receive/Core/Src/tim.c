@@ -62,7 +62,6 @@ void MX_TIM2_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM2_Init 2 */
-  HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END TIM2_Init 2 */
 
 }
@@ -107,5 +106,8 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 }
 
 /* USER CODE BEGIN 1 */
-
+void TIM2_Start(void)
+{
+	  HAL_TIM_Base_Start_IT(&htim2);
+}
 /* USER CODE END 1 */

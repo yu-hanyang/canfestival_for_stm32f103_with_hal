@@ -28,6 +28,8 @@
 #include "Key.h"
 #include "app_controller.h"
 #include "app_led.h"
+#include "states.h"
+#include "slavedic.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,8 +62,8 @@ CAN_TxHeaderTypeDef TxMsgArray[5] = { { .StdId = 0x555, .ExtId = 0x00000000,
 		.IDE = CAN_ID_STD, .RTR = CAN_RTR_DATA, .DLC = 4 }, { .StdId = 0x000,
 		.ExtId = 0x12345678, .IDE = CAN_ID_EXT, .RTR = CAN_RTR_DATA, .DLC = 4 },
 		{ .StdId = 0x666, .ExtId = 0x00000000, .IDE = CAN_ID_STD, .RTR =
-				CAN_RTR_REMOTE, .DLC = 0 },
-		{ .StdId = 0x000, .ExtId = 0x12345678, .IDE = CAN_ID_EXT, .RTR =
+		CAN_RTR_REMOTE, .DLC = 0 }, { .StdId = 0x000, .ExtId = 0x12345678,
+				.IDE = CAN_ID_EXT, .RTR =
 				CAN_RTR_REMOTE, .DLC = 0 }, { 0 } };
 
 uint8_t pTxMsgArray = 0;
@@ -83,133 +85,99 @@ void SystemClock_Config(void);
 /* USER CODE END 0 */
 
 /**
-  * @brief  The application entry point.
-  * @retval int
-  */
-int main(void)
-{
+ * @brief  The application entry point.
+ * @retval int
+ */
+int main(void) {
 
-  /* USER CODE BEGIN 1 */
+	/* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+	/* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+	/* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+	/* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+	/* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_CAN_Init();
-  MX_TIM2_Init();
-  /* USER CODE BEGIN 2 */
-
+	/* Initialize all configured peripherals */
+	MX_GPIO_Init();
+	MX_CAN_Init();
+	MX_TIM2_Init();
+	/* USER CODE BEGIN 2 */
+	TIM2_Start();
 	OLED_Init();
 
 	OLED_ShowString(1, 1, "Rx :");
 	OLED_ShowString(2, 1, "RxID:");
 	OLED_ShowString(3, 1, "Leng:");
 	OLED_ShowString(4, 1, "Data:");
-  /* USER CODE END 2 */
+	setNodeId(&slavedic_Data, 1); // 设置Canopen id为1
+	setState(&slavedic_Data, Initialisation); // NMT状态设置为Initialisation
+	setState(&slavedic_Data, Pre_operational); // NMT状态设置为Pre_operational
+	setState(&slavedic_Data, Operational); // NMT状态设置为Operational
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+
+	/* USER CODE END 2 */
+
+	/* Infinite loop */
+	/* USER CODE BEGIN WHILE */
 	while (1) {
-		KeyNum = Key_GetNum();
 
-		if (KeyNum == 1) {
-			MyCAN_Transmit(TxMsgArray[pTxMsgArray], TxDataArray[pTxMsgArray]);
-			pTxMsgArray++;
-			pTxMsgArray %= 4;
-		}
+		/* USER CODE END WHILE */
 
-		if (MyCAN_RxFlag == 1) {
-			MyCAN_RxFlag = 0;
-
-			if (RxHeader.IDE == CAN_ID_STD) {
-				OLED_ShowString(1, 6, "Std");
-				OLED_ShowHexNum(2, 6, RxHeader.StdId, 8);
-
-			} else if (RxHeader.IDE == CAN_ID_EXT) {
-				OLED_ShowString(1, 6, "Ext");
-				OLED_ShowHexNum(2, 6, RxHeader.ExtId, 8);
-			}
-
-			if (RxHeader.RTR == CAN_RTR_DATA) {
-				OLED_ShowString(1, 10, "Data  ");
-				OLED_ShowHexNum(3, 6, RxHeader.DLC, 1);
-				OLED_ShowHexNum(4, 6, RxData[0], 2);
-				OLED_ShowHexNum(4, 9, RxData[1], 2);
-				OLED_ShowHexNum(4, 12, RxData[2], 2);
-				OLED_ShowHexNum(4, 15, RxData[3], 2);
-			} else if (RxHeader.RTR == CAN_RTR_REMOTE) {
-				OLED_ShowString(1, 10, "Remote");
-				OLED_ShowHexNum(3, 6, RxHeader.DLC, 1);
-				OLED_ShowHexNum(4, 6, 0x00, 2);
-				OLED_ShowHexNum(4, 9, 0x00, 2);
-				OLED_ShowHexNum(4, 12, 0x00, 2);
-				OLED_ShowHexNum(4, 15, 0x00, 2);
-			}
-
-		}
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+		/* USER CODE BEGIN 3 */
 		app_controller_task();
 		app_led_task();
-
+		HAL_Delay(1000);
 	}
-  /* USER CODE END 3 */
+	/* USER CODE END 3 */
 }
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
-  */
-void SystemClock_Config(void)
-{
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ * @brief System Clock Configuration
+ * @retval None
+ */
+void SystemClock_Config(void) {
+	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV2;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	/** Initializes the RCC Oscillators according to the specified parameters
+	 * in the RCC_OscInitTypeDef structure.
+	 */
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+	RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+	RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV2;
+	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+	RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+	RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
+	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
+		Error_Handler();
+	}
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+	/** Initializes the CPU, AHB and APB buses clocks
+	 */
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
+	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK) {
+		Error_Handler();
+	}
 }
 
 /* USER CODE BEGIN 4 */
@@ -217,17 +185,16 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
+	/* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
 	__disable_irq();
 	while (1) {
 	}
-  /* USER CODE END Error_Handler_Debug */
+	/* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
 /**

@@ -43,7 +43,6 @@ void MX_CAN_Init(void);
 /* USER CODE BEGIN Prototypes */
 
 void MyCAN_Transmit(CAN_TxHeaderTypeDef _TxHeader, uint8_t *Data);  //数据发送函数
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan);
 extern CAN_RxHeaderTypeDef RxHeader;      //接收
 extern uint8_t MyCAN_RxFlag;
 

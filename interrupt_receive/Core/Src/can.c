@@ -171,14 +171,6 @@ void MyCAN_Transmit(CAN_TxHeaderTypeDef _TxHeader, uint8_t *Data) {
 
 
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
-{
-	if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
-	{
-		return ;
-	}
-	MyCAN_RxFlag = 1;
-}
 
 
 /* USER CODE END 1 */
