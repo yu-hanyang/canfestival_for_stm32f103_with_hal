@@ -100,7 +100,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS32 slavedic_obj1016[]={0};
 
 /* index 0x1017 :   Producer Heartbeat Time. */
-                    UNS16 slavedic_obj1017 = 0xBBB;	/* 3003 */
+                    UNS16 slavedic_obj1017 = 0xBB8;	/* 3000 */
                     ODCallback_t slavedic_Index1017_callbacks[] = 
                      {
                        NULL,
@@ -322,7 +322,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 slavedic_obj1800_Transmission_Type = 0xFE;	/* 254 */
                     UNS16 slavedic_obj1800_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 slavedic_obj1800_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 slavedic_obj1800_Event_Timer = 0x1F4;	/* 500 */
+                    UNS16 slavedic_obj1800_Event_Timer = 0x64;	/* 100 */
                     UNS8 slavedic_obj1800_SYNC_start_value = 0x0;	/* 0 */
                     ODCallback_t slavedic_Index1800_callbacks[] = 
                      {

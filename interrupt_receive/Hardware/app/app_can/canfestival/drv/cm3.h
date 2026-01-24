@@ -19,7 +19,7 @@
 #define BSP_LSS_CMD_ID_INQUIRY          0x5E//询问节点ID号
 
 
-void TIM3_IRQHandler(void);
+void canopen_time(void);
 
 
 #endif 

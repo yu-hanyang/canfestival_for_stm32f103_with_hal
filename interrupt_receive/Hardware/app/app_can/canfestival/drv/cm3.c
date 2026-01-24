@@ -16,13 +16,13 @@
  */
 #define TIMER_MAX_COUNT                         0xFFFF
 
-static uint8_t tx_fifo_in_use = 0;
+//static uint8_t tx_fifo_in_use = 0;
 
 static TIMEVAL last_time_set = TIMER_MAX_COUNT;
-static unsigned int NextTime = TIMER_MAX_COUNT;
+static unsigned int NextTime = 0;
 static unsigned int TimeCNT = 0;
 
-static CO_Data *co_data = NULL;
+//static CO_Data *co_data = NULL;
 CAN_TxHeaderTypeDef CAN1_TxHeader;
 CAN_RxHeaderTypeDef CAN1_RxHeader;
 
@@ -45,7 +45,7 @@ TIMEVAL getElapsedTime(void) {
 }
 
 // This function handles Timer 3 interrupt request.
-void TIM3_IRQHandler(void) {
+void canopen_time(void) {
 	TimeCNT++;
 	if (TimeCNT >= TIMER_MAX_COUNT) {
 		TimeCNT = 0;
@@ -65,21 +65,6 @@ unsigned char canSend(CAN_PORT notused, Message *m) {
 	CAN1_TxHeader.DLC = (uint32_t) (m->len);  //数据长度
 	CAN1_TxHeader.RTR = CAN_RTR_DATA; //数据帧
 	if (HAL_CAN_AddTxMessage(&hcan, &CAN1_TxHeader, m->data, &TxMailbox)
-			!= HAL_OK) {
-		return 1;      //发送
-	}
-	return 0;
-}
-
-uint8_t bsp_can_send(uint16_t cob_id, uint8_t *buf) {
-	uint32_t TxMailbox;
-
-	CAN1_TxHeader.StdId = cob_id;                //标准id
-	CAN1_TxHeader.ExtId = 0x0000;                  //扩展id
-	CAN1_TxHeader.IDE = CAN_ID_STD;  //帧类型
-	CAN1_TxHeader.DLC = 8;  //数据长度
-	CAN1_TxHeader.RTR = CAN_RTR_DATA; //数据帧
-	if (HAL_CAN_AddTxMessage(&hcan, &CAN1_TxHeader, buf, &TxMailbox)
 			!= HAL_OK) {
 		return 1;      //发送
 	}
