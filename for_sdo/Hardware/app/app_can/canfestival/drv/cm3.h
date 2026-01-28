@@ -20,7 +20,7 @@
 
 
 void canopen_time(void);
-
+void canopen_node_begin();
 
 #endif 
 

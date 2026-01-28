@@ -28,8 +28,7 @@
 #include "Key.h"
 #include "app_controller.h"
 #include "app_led.h"
-#include "states.h"
-#include "slavedic.h"
+#include "app_can.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,10 +122,7 @@ int main(void)
 	OLED_ShowString(2, 1, "RxID:");
 	OLED_ShowString(3, 1, "Leng:");
 	OLED_ShowString(4, 1, "Data:");
-	setNodeId(&slavedic_Data, 1); // 设置Canopen id为1
-	setState(&slavedic_Data, Initialisation); // NMT状态设置为Initialisation
-	setState(&slavedic_Data, Pre_operational); // NMT状态设置为Pre_operational
-	setState(&slavedic_Data, Operational); // NMT状态设置为Operational
+	app_can_init();
 
 
   /* USER CODE END 2 */
