@@ -6,7 +6,7 @@
 /**************************************************************************/
 /* Declaration of mapped variables                                        */
 /**************************************************************************/
-UNS8 for_sdo = 0x0;		/* Mapped at index 0x2000, subindex 0x00 */
+UNS8 for_sdo = 0x12;		/* Mapped at index 0x2000, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -532,6 +532,10 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x2000 :   Mapped variable for_sdo */
+                    ODCallback_t for_sdo_callbacks[] = 
+                     {
+                       NULL,
+                     };
                     const CONSTSTORE subindex slavedic_Index2000[] = 
                      {
                        { RW, uint8, sizeof (UNS8), .pObject=&for_sdo }
@@ -593,7 +597,7 @@ const CONSTSTORE indextable * slavedic_scanIndexOD (UNS16 wIndex, UNS32 * errorC
 		case 0x1A01: i = 18;break;
 		case 0x1A02: i = 19;break;
 		case 0x1A03: i = 20;break;
-		case 0x2000: i = 21;break;
+		case 0x2000: i = 21;*callbacks = for_sdo_callbacks; break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;

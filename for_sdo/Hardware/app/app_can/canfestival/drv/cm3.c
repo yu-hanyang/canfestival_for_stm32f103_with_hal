@@ -120,10 +120,19 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 
 }
 
+UNS32 Index2000_00callback(CO_Data *d, UNS16 wIndex, UNS8 bSubindex)
+{
+	for_sdo += 2;
+	return 0x33221100;
+}
+
 void canopen_node_begin()
 {
+	RegisterSetODentryCallBack(co_data, 0x2000, 0x00, Index2000_00callback);
 	setNodeId(co_data, 1); // 设置Canopen id为1
 	setState(co_data, Initialisation); // NMT状态设置为Initialisation
 	setState(co_data, Pre_operational); // NMT状态设置为Pre_operational
 	setState(co_data, Operational); // NMT状态设置为Operational
 }
+
+
