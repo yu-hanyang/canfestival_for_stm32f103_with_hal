@@ -130,6 +130,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
+		OLED_ShowString(4, 1, test_char);
 
     /* USER CODE END WHILE */
 

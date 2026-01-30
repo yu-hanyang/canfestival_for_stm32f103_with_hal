@@ -7,6 +7,7 @@
 /* Declaration of mapped variables                                        */
 /**************************************************************************/
 UNS8 for_sdo = 0x12;		/* Mapped at index 0x2000, subindex 0x00 */
+char test_char[14] = "";		/* Mapped at index 0x2001, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
@@ -541,6 +542,16 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), .pObject=&for_sdo }
                      };
 
+/* index 0x2001 :   Mapped variable test_char */
+                    ODCallback_t test_char_callbacks[] = 
+                     {
+                       NULL,
+                     };
+                    const CONSTSTORE subindex slavedic_Index2001[] = 
+                     {
+                       { RW, visible_string, 14, .pObject=&test_char }
+                     };
+
 /**************************************************************************/
 /* Declaration of pointed variables                                       */
 /**************************************************************************/
@@ -569,6 +580,7 @@ const CONSTSTORE indextable slavedic_objdict[] =
   { (const CONSTSTORE subindex* const)slavedic_Index1A02,sizeof(slavedic_Index1A02)/sizeof(slavedic_Index1A02[0]), 0x1A02},
   { (const CONSTSTORE subindex* const)slavedic_Index1A03,sizeof(slavedic_Index1A03)/sizeof(slavedic_Index1A03[0]), 0x1A03},
   { (const CONSTSTORE subindex* const)slavedic_Index2000,sizeof(slavedic_Index2000)/sizeof(slavedic_Index2000[0]), 0x2000},
+  { (const CONSTSTORE subindex* const)slavedic_Index2001,sizeof(slavedic_Index2001)/sizeof(slavedic_Index2001[0]), 0x2001},
 };
 
 const CONSTSTORE indextable * slavedic_scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t **callbacks)
@@ -598,6 +610,7 @@ const CONSTSTORE indextable * slavedic_scanIndexOD (UNS16 wIndex, UNS32 * errorC
 		case 0x1A02: i = 19;break;
 		case 0x1A03: i = 20;break;
 		case 0x2000: i = 21;*callbacks = for_sdo_callbacks; break;
+		case 0x2001: i = 22;*callbacks = test_char_callbacks; break;
 		default:
 			*errorCode = OD_NO_SUCH_OBJECT;
 			return NULL;
